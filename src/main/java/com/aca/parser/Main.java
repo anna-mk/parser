@@ -1,0 +1,110 @@
+package com.aca.parser;
+
+import com.aca.parser.domain.Cinema;
+import com.aca.parser.domain.Movie;
+import com.aca.parser.domain.MovieSession;
+import com.aca.parser.service.CinemaService;
+import com.aca.parser.service.MovieService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class Main {
+
+    @Autowired
+    private static CinemaService cinemaService;
+
+    @Autowired
+    private static MovieService movieService;
+
+    public static void main(String[] args) throws IOException, ParseException {
+        System.out.println(sessionsCinemaStarDalma());
+    }
+
+    private static List<MovieSession> sessionsCinemaStarDalma() throws IOException, ParseException {
+        List<MovieSession> movieSessions = new ArrayList<MovieSession>();
+
+        String url = "https://www.tomsarkgh.am/en/venue/393/Cinema-Star.html";
+        Document document = Jsoup.connect(url).timeout(20 * 1000).get();
+        for (Element row : document.select("table.table-bordered tr")) {
+            if (row.getElementsByClass("ocItem").attr("data-attrs").equals(""))
+                continue;
+
+            //date
+            String dateTime = row.getElementsByClass("ocTime").attr("content");
+            if (dateTime.equals(" "))
+                continue;
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date = formatter.parse(dateTime);
+
+            //movieName
+            String movieName = row.getElementsByTag("strong").text();
+
+            String dataAttrs = row.getElementsByClass("ocItem").attr("data-attrs");
+
+            //dimension
+            String dimension = "";
+            if (dataAttrs.endsWith("os")) {
+                for (int i = dataAttrs.length() - 9; i < dataAttrs.length(); i++)
+                    dimension += dataAttrs.charAt(i);
+            } else {
+                for (int i = dataAttrs.length() - 2; i < dataAttrs.length(); i++)
+                    dimension += dataAttrs.charAt(i);
+            }
+
+            //ticket price
+            String ticketPriceString = "";
+            if (dataAttrs.endsWith("os")) {
+                for (int i = dataAttrs.length() - 16; i < dataAttrs.length() - 12; i++)
+                    ticketPriceString += dataAttrs.charAt(i);
+            } else {
+                for (int i = dataAttrs.length() - 9; i < dataAttrs.length() - 5; i++)
+                    ticketPriceString += dataAttrs.charAt(i);
+            }
+            Integer ticketPrice = Integer.parseInt(ticketPriceString);
+
+            //cinema name, hall
+            String cinemaNameHall = row.getElementsByTag("i").text();
+            String[] split = cinemaNameHall.split("\\(");
+            String cinemaName = split[0];
+            if (cinemaName.endsWith(" ")) {
+                cinemaName = cinemaName.substring(0, cinemaName.length() - 1);
+            }
+            String cinemaHall = split[1].substring(0, split[1].length() - 1);
+
+
+            String languageData = dataAttrs.split(",")[1];
+
+            //language
+            String language = "";
+            if (languageData.equals(" english"))
+                language = "ENG";
+            else
+                language = "RUS";
+
+            Cinema cinema = cinemaService.getCinemaByName(cinemaName);
+            Movie movie = movieService.getMovieByName(movieName);
+
+            MovieSession movieSession = new MovieSession();
+            movieSession.setCinema(cinema);
+            movieSession.setHall(cinemaHall);
+            movieSession.setDate(date);
+            movieSession.setMovie(movie);
+            movieSession.setLanguage(language);
+            movieSession.setTicketPrice(ticketPrice);
+            movieSession.setDimension(dimension);
+
+            movieSessions.add(movieSession);
+        }
+        return movieSessions;
+    }
+}
