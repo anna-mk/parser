@@ -9,6 +9,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Main {
+public class Main implements CommandLineRunner {
 
     @Autowired
     private static CinemaService cinemaService;
@@ -27,6 +29,11 @@ public class Main {
     private static MovieService movieService;
 
     public static void main(String[] args) throws IOException, ParseException {
+        SpringApplication.run(Main.class, args);
+
+    }
+
+    public void run(String... args) throws Exception {
         System.out.println(sessionsCinemaStarDalma());
     }
 
@@ -81,7 +88,6 @@ public class Main {
             }
             String cinemaHall = split[1].substring(0, split[1].length() - 1);
 
-
             String languageData = dataAttrs.split(",")[1];
 
             //language
@@ -107,4 +113,61 @@ public class Main {
         }
         return movieSessions;
     }
+
+//    private static List<MovieSession> sessionsKinoPark() throws ParseException {
+//        String url = "https://www.tomsarkgh.am//en/venue/997/KinoPark.html";
+//        Document document = Jsoup.connect(url).timeout(20 * 1000).get();
+//        for (Element row : document.select("table.table-bordered tr")) {
+//            if (row.getElementsByClass("ocItem").attr("data-attrs").equals(""))
+//                continue;
+//
+//            //date
+//            String dateTime = row.getElementsByClass("ocTime").attr("content");
+//            if (dateTime.equals(" "))
+//                continue;
+//            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//            Date date = formatter.parse(dateTime);
+//
+//            //movieName
+//            String movieName = row.getElementsByTag("strong").text();
+//
+//            String dataAttrs = row.getElementsByClass("ocItem").attr("data-attrs");
+//
+//            //dimension
+//            String dimension = "";
+//            if (dataAttrs.split(",")[1].endsWith("atmos"))
+//                dimension = dataAttrs.substring(0, 9);
+//            else
+//                dimension = dataAttrs.substring(0, 2);
+//
+//            //language
+//            String language = "";
+//            if (dataAttrs.endsWith("english, "))
+//                language = "ENG";
+//            else
+//                language = "RUS";
+//
+//            //ticketPrice
+//            String ticketPriceString = "";
+//            if (dataAttrs.endsWith("d, "))
+//                ticketPriceString = dataAttrs.substring(dataAttrs.length() - 7, dataAttrs.length() - 3);
+//            else
+//                ticketPriceString = dataAttrs.substring(dataAttrs.length() - 16, dataAttrs.length() - 12);
+//            Integer ticketPrice = Integer.parseInt(ticketPriceString);
+//
+//            //cinema name, hall
+//            String cinemaNameHall = row.getElementsByTag("i").text();
+//            String[] split = cinemaNameHall.split("\\(");
+//            String cinemaName = split[0];
+//            if (cinemaName.endsWith(" ")) {
+//                cinemaName = cinemaName.substring(0, cinemaName.length() - 1);
+//            }
+//            String cinemaHall = split[1].substring(0, split[1].length() - 1);
+//
+//            System.out.println(cinemaName + ", " + cinemaHall);
+//
+//        }
+//    }
+
+
 }
