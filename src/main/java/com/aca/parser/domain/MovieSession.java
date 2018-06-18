@@ -14,7 +14,7 @@ public class MovieSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cinema_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Cinema cinema;
@@ -25,7 +25,7 @@ public class MovieSession {
     @Column(nullable = false)
     private Date date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Movie movie;
