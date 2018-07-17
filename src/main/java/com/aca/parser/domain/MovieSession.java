@@ -39,6 +39,16 @@ public class MovieSession {
     @Column(nullable = false)
     private String dimension;
 
+    public MovieSession(Cinema cinema, String hall, Date date, Movie movie, String language, Integer ticketPrice, String dimension) {
+        this.cinema = cinema;
+        this.hall = hall;
+        this.date = date;
+        this.movie = movie;
+        this.language = language;
+        this.ticketPrice = ticketPrice;
+        this.dimension = dimension;
+    }
+
     public Long getId() {
         return id;
     }

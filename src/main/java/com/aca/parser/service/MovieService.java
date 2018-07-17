@@ -11,6 +11,14 @@ public class MovieService {
     @Autowired
     private MovieRepo movieRepo;
 
+    public MovieRepo getMovieRepo() {
+        return movieRepo;
+    }
+
+    public void setMovieRepo(MovieRepo movieRepo) {
+        this.movieRepo = movieRepo;
+    }
+
     public Movie getMovieByName(String movieName) {
         return movieRepo.findByName(movieName);
     }

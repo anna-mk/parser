@@ -1,8 +1,11 @@
-package com.aca.parser.service;
+package com.aca.parser.service.parser;
 
 import com.aca.parser.domain.Cinema;
 import com.aca.parser.domain.Movie;
 import com.aca.parser.domain.MovieSession;
+import com.aca.parser.service.CinemaService;
+import com.aca.parser.service.MovieService;
+import com.aca.parser.service.SessionService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,13 +22,16 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class Parser {
+public class SessionParser {
 
     @Autowired
     private CinemaService cinemaService;
 
     @Autowired
     private MovieService movieService;
+
+    @Autowired
+    private SessionService sessionService;
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void parseTomsarkghData() throws IOException, ParseException {
@@ -96,16 +102,9 @@ public class Parser {
             Cinema cinema = cinemaService.getCinemaByName(cinemaName);
             Movie movie = movieService.getMovieByName(movieName);
 
-            MovieSession movieSession = new MovieSession();
-            movieSession.setCinema(cinema);
-            movieSession.setHall(cinemaHall);
-            movieSession.setDate(date);
-            movieSession.setMovie(movie);
-            movieSession.setLanguage(language);
-            movieSession.setTicketPrice(ticketPrice);
-            movieSession.setDimension(dimension);
-
+            MovieSession movieSession = new MovieSession(cinema, cinemaHall, date, movie, language, ticketPrice, dimension);
             movieSessions.add(movieSession);
+            sessionService.getMovieSessionRepo().save(movieSession);
         }
         return movieSessions;
     }
@@ -162,21 +161,12 @@ public class Parser {
             }
             String cinemaHall = split[1].substring(0, split[1].length() - 1);
 
-            //System.out.println(cinemaName + ", " + cinemaHall);
-
             Cinema cinema = cinemaService.getCinemaByName(cinemaName);
             Movie movie = movieService.getMovieByName(movieName);
 
-            MovieSession movieSession = new MovieSession();
-            movieSession.setCinema(cinema);
-            movieSession.setHall(cinemaHall);
-            movieSession.setDate(date);
-            movieSession.setMovie(movie);
-            movieSession.setLanguage(language);
-            movieSession.setTicketPrice(ticketPrice);
-            movieSession.setDimension(dimension);
-
+            MovieSession movieSession = new MovieSession(cinema, cinemaHall, date, movie, language, ticketPrice, dimension);
             movieSessions.add(movieSession);
+            sessionService.getMovieSessionRepo().save(movieSession);
         }
         return  movieSessions;
     }

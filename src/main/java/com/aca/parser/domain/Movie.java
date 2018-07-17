@@ -40,6 +40,19 @@ public class Movie {
     @Column
     private String trailerUrl;
 
+    public Movie(String name, String director, String writers, String stars, String released, String description, String genre, String duration, String posterUrl, String trailerUrl) {
+        this.name = name;
+        this.director = director;
+        this.writers = writers;
+        this.stars = stars;
+        this.released = released;
+        this.description = description;
+        this.genre = genre;
+        this.duration = duration;
+        this.posterUrl = posterUrl;
+        this.trailerUrl = trailerUrl;
+    }
+
     public Long getId() {
         return id;
     }

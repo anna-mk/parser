@@ -22,6 +22,13 @@ public class Cinema {
     @Column(nullable = false)
     private String site_url;
 
+    public Cinema(String name, String address, String phone, String site_url) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.site_url = site_url;
+    }
+
     public Long getId() {
         return id;
     }

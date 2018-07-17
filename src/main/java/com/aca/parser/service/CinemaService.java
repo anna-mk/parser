@@ -11,6 +11,14 @@ public class CinemaService {
     @Autowired
     private CinemaRepo cinemaRepo;
 
+    public CinemaRepo getCinemaRepo() {
+        return cinemaRepo;
+    }
+
+    public void setCinemaRepo(CinemaRepo cinemaRepo) {
+        this.cinemaRepo = cinemaRepo;
+    }
+
     public Cinema getCinemaByName(String cinemaName) {
         return cinemaRepo.findByName(cinemaName);
     }
